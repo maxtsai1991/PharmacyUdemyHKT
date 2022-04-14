@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPharmacyData() {
-
         //口罩資料網址 (資料來源)
         val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
 
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "onResponse: ${response.body?.string()}") // body有可能為空null,所以要加?(問號)
             }
         })
-
     }
 
 }
