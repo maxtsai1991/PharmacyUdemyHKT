@@ -3,6 +3,7 @@ package com.example.pharmacyudemyhkt
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
 
@@ -40,6 +41,25 @@ import java.io.IOException
  * ------ 注意事項 : 記得使用完POST測試,要註解起來,因為該口罩地圖專案,不會用到POST請求,並且使用非同步(enqueue)方式,如要測試同步(execute),需使用ExecuteDemo.kt,因為同步不能在MainActivity頁面使用,會阻塞主執行緒,相關事項可參考3-12章節------
  */
 
+/**
+ * 3-14 使用TextView 和 ScrollView 將口罩資料顯示在畫面上
+ * (JSON 資料解析方式參考網址 : https://tw-hkt.blogspot.com/2020/12/android-json.html)
+ * 補充 :
+ * 1.   build.gradle(Module),添加下列兩行,才能在Activity找到Layout各類元件的ID:
+ *          id 'kotlin-kapt'
+ *          id 'kotlin-android-extensions'
+ * 2.   修改模擬器該APP顯示名稱 & 修改口罩APP的圖標
+ * 3.   連線到口罩資料網址，獲取到回應資料，這個動作可以被稱爲是「呼叫 API」,
+ *      APP手機裝置端與遠端伺服器互相傳遞資料，我們通常會透過API來溝通,
+ *      手機獲取伺服器資料，通常採用 GET 或 POST 方式 EX :
+ *          val request : Request = Request.Builder().url("https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json").get().build()
+ *          val call : Call = okHttpClient.newCall(request)
+ *          call.enqueue(object : Callback{
+ *              override fun onFailure(call: Call, e: IOException) { }
+ *              override fun onResponse(call: Call, response: Response) { }
+ *          }
+ */
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -49,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getPharmacyData()
+        getPharmacyData() // 取得口罩地圖資料的方法
     }
 
     private fun getPharmacyData() {
@@ -57,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         getDemo()
 
         // POST請求使用方式 : 查看3-13說明及注意事項
-//        postDemo()
+//         postDemo()
     }
 
     /**
@@ -83,7 +103,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                Log.d(TAG, "onResponse: ${response.body?.string()}") // body有可能為空null,所以要加?(問號)
+                val pharmaciesData : String? = response.body?.string()
+
+                //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤
+                runOnUiThread {
+                    //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中
+                    tv_pharmacies_data.text = pharmaciesData
+//                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
+                }
             }
         })
     }
@@ -119,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 Log.d(TAG, "onResponse: ${response.body?.string()}")
             }
+
         })
     }
 
