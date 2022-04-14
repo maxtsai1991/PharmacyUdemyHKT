@@ -33,6 +33,10 @@ android {
 
 dependencies {
 
+    // 3-8 OkHttp (參考網址 : https://tw-hkt.blogspot.com/2020/12/android-okhttp.html)
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
+    // 內建,創專案就有的Libs
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
