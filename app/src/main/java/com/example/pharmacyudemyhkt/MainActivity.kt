@@ -27,6 +27,19 @@ import java.io.IOException
  * 口罩資料網址 : https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json
  */
 
+/**
+ * 3-13 補充OKHttp中的POST請求方法
+ * 該章節補充說明 :
+ * 1.   口罩資料，沒有POST功能，這裡HKT老師另外選用Reqres網站，來練習Post請求如何使用 ; Reqres網站是一個提供假資料API串接的網站，方便練習 RESTful API
+ * 2.   提供API假資料的網站 : https://reqres.in/
+ * 3.   該章節使用提供假資料API串接的網站 : https://reqres.in/api/user
+ * 該章節使用方式 :
+ * 1.   使用 提供假資料串接的網站(REQRES , https://reqres.in/ ) EX : https://reqres.in/api/users
+ * 2.   在FormBody參數.add方法打自訂義的name,value , 就會在Logcat上回應Json格式,自己所打的資料
+ *
+ * ------ 注意事項 : 記得使用完POST測試,要註解起來,因為該口罩地圖專案,不會用到POST請求,並且使用非同步(enqueue)方式,如要測試同步(execute),需使用ExecuteDemo.kt,因為同步不能在MainActivity頁面使用,會阻塞主執行緒,相關事項可參考3-12章節------
+ */
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -40,6 +53,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPharmacyData() {
+        // GET請求使用方式 : 口罩地圖是使用GET請求,如要測試POST請求,需註解該方法
+        getDemo()
+
+        // POST請求使用方式 : 查看3-13說明及注意事項
+//        postDemo()
+    }
+
+    /**
+     * GET請求 , 口罩地圖是使用Get去請求 , 如要測試POST請求 , 需註解該方法
+     */
+    private fun getDemo() {
         //口罩資料網址 (資料來源)
         val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
 
@@ -60,6 +84,40 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 Log.d(TAG, "onResponse: ${response.body?.string()}") // body有可能為空null,所以要加?(問號)
+            }
+        })
+    }
+
+    /**
+     * POST請求使用方式,查看3-13說明及注意事項
+     */
+    private fun postDemo() {
+        // POST請求的測試網址 (提供假資料串接的網站)
+        val testUrl = "https://reqres.in/api/users"
+
+        //Part 1: 宣告 OkHttpClient
+        val okHttpClient = OkHttpClient().newBuilder().build()
+
+        //加入 FormBody 參數 name 和 job 。
+        val formBody: FormBody = FormBody.Builder()
+            .add("name", "MAXTsai") // 名字
+            .add("job", "Engineersss") // 工作
+            .build()
+
+        //Part 2: 宣告 Request，要求要連到指定網址
+        val request: Request = Request.Builder().url(testUrl).post(formBody).build() // url(連線的網址) ; .post意思是使用post請求,參數放進剛剛所帶入的FormBody 參數
+
+        //Part 3: 宣告 Call
+        val call = okHttpClient.newCall(request)
+
+        //執行 Call 連線後，採用 enqueue 非同步方式，獲取到回應的結果資料 , 覆寫以及監聽兩個方法(成功或失敗)
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace() // 如果報錯,把錯印出來
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                Log.d(TAG, "onResponse: ${response.body?.string()}")
             }
         })
     }

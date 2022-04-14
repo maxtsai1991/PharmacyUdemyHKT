@@ -31,16 +31,4 @@ private fun getPharmacyData() {
     val result : Response = call.execute()
     println("onResponse(執行同步方式) : ${result.body?.string()}" )
 
-    // 非同步方式 (enqueue())
-//    //執行 Call 連線後，採用 enqueue 非同步方式，獲取到回應的結果資料 , 實作兩個覆寫方法(失敗&成功)
-//    call.enqueue(object : Callback {
-//        override fun onFailure(call: Call, e: IOException) {
-//            Log.d(MainActivity.TAG,"onFailure: $e")
-//        }
-//
-//        override fun onResponse(call: Call, response: Response) {
-//            Log.d(MainActivity.TAG, "onResponse: ${response.body?.string()}") // body有可能為空null,所以要加?(問號)
-//        }
-//    })
-
 }
