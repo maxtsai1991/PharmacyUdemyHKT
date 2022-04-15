@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -82,7 +83,7 @@ import java.io.IOException
  */
 
 /**
- *  3-17 解析JSON範例一
+ * 3-17 解析JSON範例一
  *      解析 JSON 資料格式，注意的是層次概念，以 口罩資料 為例，若我們要取得最外層資料，可以直接獲取，例如 「 “type”: “FeatureCollection”」，我們解析方式可以寫成這樣：
  *          從 Okhttp 收到的回應資料 response，取出 body 的部分,注意這裏，response 不能二次使用，不然會噴錯誤。所以我們將他轉存到 pharmaciesData
  *              val pharmaciesData = response.body?.string()
@@ -91,6 +92,26 @@ import java.io.IOException
  *          這個時候，我們就可以透過 getString 的方式，裡面放 key (name) 值， 即可以獲取到最外層的 type 欄位資料值。
  *              Log.d(TAG, "type : ${obj.getString("type")}")
  *      輸出結果 : FeatureCollection
+ */
+
+/**
+ *  3-18 解析JSON範例二
+ *          JsonObject : {}
+ *          JsonArray : []
+ *      如果我們要獲取的是 features 裡面的 properties 裡面的 name。解析 JSON 資料，除了要注意層次外，還要注意結構。features 是一個陣列 [] ，中括號來包覆資料，就需要將他轉換成 JSONArray。
+ *          val pharmaciesData = response.body?.string() // 取API所有資料
+ *      將 pharmaciesData 整包字串資料，轉成 JSONObject 格式
+ *          val obj = JSONObject(pharmaciesData)
+ *      features 是一個陣列 [] ，需要將他轉換成 JSONArray
+ *          val featuresArray = JSONArray(obj.getString("features"))
+ *      透過 for 迴圈，即可以取出所有的藥局名稱
+ *          for (i in 0 until featuresArray.length()) {
+ *               val properties = featuresArray.getJSONObject(i).getString("properties")
+ *               val property = JSONObject(properties) // 取得properties裡面的name , phone , address
+ *               Log.d(TAG, "藥局名稱 : ${property.getString("name")}")
+ *               Log.d(TAG, "電話 : ${property.getString("phone")}")
+ *               Log.d(TAG, "地址 : ${property.getString("address")}")
+ *          }
  */
 
 
@@ -141,15 +162,28 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                // 將整包資料拉下來存起來
+                // 將整包資料拉下來存起來 【API所有資料】
                 val pharmaciesData : String? = response.body?.string()
 //                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
 
-                // API拿到的字串資料(整包資料),透過JSONOBJECT方法轉換成jsonobject格式,再存到obj
+                // API拿到的字串資料(整包資料),透過JSONOBJECT方法轉換成jsonobject格式,再存到obj 【所有資料轉成jsonObject】
                 val obj = JSONObject(pharmaciesData)
 
                 // obj在透過getString方法,拿取KEY值,就會得到Value (Json格式的整包資料,拿取特定某一筆值)
                 Log.d(TAG, "type : ${obj.getString("type")}")
+
+                // features是一個陣列資料格式,所以轉成JSONArray【jsonObject的所有資料,在去拿features】
+                val featuresArray = JSONArray(obj.getString("features"))
+
+                // for迴圈,i介於起訖點從第0筆到最後一筆(featuresArray.length()) 【featuresArray陣列用for迴圈,在去拿每一筆的properties裡面的name & phone & address】
+                for (i in 0 until featuresArray.length()){
+                    val properties = featuresArray.getJSONObject(i).getString("properties") // 取得features(陣列)裡面的properties(object)
+                    val property = JSONObject(properties)// 取得properties(object)裡面的name , phone , address
+                    Log.d(TAG, "第${i}間藥局: ")
+                    Log.d(TAG, "藥局名稱 : ${property.getString("name")}")
+                    Log.d(TAG, "電話 : ${property.getString("phone")}")
+                    Log.d(TAG, "地址 : ${property.getString("address")}")
+                }
 
                 //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來
                 runOnUiThread {
