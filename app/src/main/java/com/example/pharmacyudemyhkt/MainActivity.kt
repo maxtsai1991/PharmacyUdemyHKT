@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
+import org.json.JSONObject
 import java.io.IOException
 
 /**
@@ -80,6 +81,19 @@ import java.io.IOException
  *          可以試著將口罩資料轉貼到 Online JSON Viewer(http://jsonviewer.stack.hu/)的網頁右上方的 Text 頁籤中，完成之後可以按左邊的 Viewer 頁籤，即可透過這套線上 JSON 小工具，快速掌握整個 JSON 資料結構
  */
 
+/**
+ *  3-17 解析JSON範例一
+ *      解析 JSON 資料格式，注意的是層次概念，以 口罩資料 為例，若我們要取得最外層資料，可以直接獲取，例如 「 “type”: “FeatureCollection”」，我們解析方式可以寫成這樣：
+ *          從 Okhttp 收到的回應資料 response，取出 body 的部分,注意這裏，response 不能二次使用，不然會噴錯誤。所以我們將他轉存到 pharmaciesData
+ *              val pharmaciesData = response.body?.string()
+ *          將 pharmaciesData 整包字串資料，轉成 JSONObject 格式
+ *              val obj = JSONObject(pharmaciesData)
+ *          這個時候，我們就可以透過 getString 的方式，裡面放 key (name) 值， 即可以獲取到最外層的 type 欄位資料值。
+ *              Log.d(TAG, "type : ${obj.getString("type")}")
+ *      輸出結果 : FeatureCollection
+ */
+
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -109,7 +123,7 @@ class MainActivity : AppCompatActivity() {
          *      部分藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json"
          *      完整藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
          */
-        val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
+        val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json"
 
         //Part 1: 宣告(設定)OkHttpClient
         val okHttpClient : OkHttpClient = OkHttpClient().newBuilder().build()
@@ -127,13 +141,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                // 將整包資料拉下來存起來
                 val pharmaciesData : String? = response.body?.string()
+//                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
 
-                //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤
+                // API拿到的字串資料(整包資料),透過JSONOBJECT方法轉換成jsonobject格式,再存到obj
+                val obj = JSONObject(pharmaciesData)
+
+                // obj在透過getString方法,拿取KEY值,就會得到Value (Json格式的整包資料,拿取特定某一筆值)
+                Log.d(TAG, "type : ${obj.getString("type")}")
+
+                //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來
                 runOnUiThread {
                     //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中
                     tv_pharmacies_data.text = pharmaciesData
-//                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
                 }
             }
         })
