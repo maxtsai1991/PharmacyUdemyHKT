@@ -6,6 +6,7 @@ import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.StringBuilder
@@ -123,6 +124,33 @@ import java.lang.StringBuilder
  *       最後取得所有藥局名稱資料，指定顯示到 TextView 元件中 EX : tv_pharmacies_data.text = propertiesName
  */
 
+/**
+ *  3-20 解析Json發生例外處理方式
+ *   情境 : 若資料中沒有對應的 key (name)值，會發生例外狀況(Exception ,java.lang.Error: org.json.JSONException: No value for typeeeee)
+ *      val pharmaciesData : String? = response.body?.string()
+ *      val obj = JSONObject(pharmaciesData)
+ *      Log.d("HKT",obj.getString("typeeeee")) //資料沒有 typeeeee 這個 key(name)值，直接會噴錯誤
+ *   這個時後可以透過 has 或 isNull 方法來避免例外錯誤：
+ *      方法一：使用 has 判斷是否存在這個資料，存在時才獲取資料
+ *          if(obj.has("typeeeee")){
+ *              Log.d(TAG,obj.getString("typeeeee"))
+ *          }else{
+ *              Log.d(TAG,"has 判斷沒有這個資料")
+ *          }
+ *      方法二：使用 isNull 判斷是為空，不為空才獲取資料
+ *          if(!obj.isNull("typeeeee")){
+ *              Log.d(TAG,obj.getString("typeeeee"))
+ *          }else{
+ *               Log.d(TAG,"isNull 判斷，沒有這個資料")
+ *          }
+ *   但例外有時真的出乎意料，所以在解析資料時，為了避免不可預期錯誤造成 APP 閃退，會多加 try…catch 來防止，如：
+ *          try {
+ *              JSONObject result = new JSONObject();
+ *              ...
+ *          } catch (e: JSONException) {
+ *              throw new RuntimeException(e);
+ *          }
+ */
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -177,8 +205,22 @@ class MainActivity : AppCompatActivity() {
                 // API拿到的字串資料(整包資料),透過JSONOBJECT方法轉換成jsonobject格式,再存到obj 【所有資料轉成jsonObject】
                 val obj = JSONObject(pharmaciesData)
 
+                // 當API資料(obj)發生JSONException or Exception , 則印出例外訊息 (防止例外而閃退APP)
+                try {
+                    // 如果API資料不為空值(!obj.isNull),也有typeeeee key,就LOG出來 , 否則就LOG出"沒有這個值"的字串
+                    if(!obj.isNull("typeeeee")){
+                        Log.d(TAG,"type : ${obj.getString("typeeeee")}")
+                    }else{
+                        Log.d(TAG,"沒有這個值")
+                    }
+                } catch (e: JSONException) {
+                    Log.d(TAG,"JSONException : $e")
+                } catch (e: Exception) {
+                    Log.d(TAG,"Exception : $e")
+                }
+
                 // obj在透過getString方法,拿取KEY值,就會得到Value (Json格式的整包資料,拿取特定某一筆值)
-//                Log.d(TAG, "type : ${obj.getString("type")}")
+                Log.d(TAG, "type : ${obj.getString("type")}")
 
                 // features是一個陣列資料格式,所以轉成JSONArray【jsonObject的所有資料,在去拿features】
                 val featuresArray = JSONArray(obj.getString("features"))
