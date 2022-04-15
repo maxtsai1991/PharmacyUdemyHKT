@@ -60,6 +60,26 @@ import java.io.IOException
  *          }
  */
 
+/**
+ * 3-15 Json資料格式簡介
+ *      JSON 資料格式是一種輕量級的資料交換格式，程式很容易建立與解析，人類也易於閱讀與書寫。JSON 格式存放方式，採物件概念，使用大括號 {} 來包覆，裡面資料為採 key 與 value ，中間使用冒號：來分隔。例如：
+ *          {
+ *              "name" : "HKT"
+ *          }
+ *      常見的 JSON 資料格式，有數字、字串、布林值，而同類型資料，可以使用中括號[]來包覆，每筆資料採用逗號做分隔
+ *          {
+ *              "name" : "HKT",
+ *              "age": 18,
+ *              "class":["Java","Kotlin","Dart"]
+ *          }
+ */
+
+/**
+ * 3-16 JSON Viewer線上小工具
+ *       JSON 線上小工具 :
+ *          可以試著將口罩資料轉貼到 Online JSON Viewer(http://jsonviewer.stack.hu/)的網頁右上方的 Text 頁籤中，完成之後可以按左邊的 Viewer 頁籤，即可透過這套線上 JSON 小工具，快速掌握整個 JSON 資料結構
+ */
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -84,7 +104,11 @@ class MainActivity : AppCompatActivity() {
      * GET請求 , 口罩地圖是使用Get去請求 , 如要測試POST請求 , 需註解該方法
      */
     private fun getDemo() {
-        //口罩資料網址 (資料來源)
+        /**
+         * 口罩資料網址 (資料來源)
+         *      部分藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json"
+         *      完整藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
+         */
         val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
 
         //Part 1: 宣告(設定)OkHttpClient
