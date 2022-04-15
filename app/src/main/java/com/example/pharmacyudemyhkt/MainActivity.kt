@@ -8,6 +8,7 @@ import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.StringBuilder
 
 /**
  * 3-8 & 3-9
@@ -114,6 +115,13 @@ import java.io.IOException
  *          }
  */
 
+/**
+ *  3-19 使用 StringBuilder組合字串資料
+ *       補充說明 : 為何使用StringBuilder而不是String ? A : 因使用 String 處理串接文字，當資料很多時很容易造成 OOM 記憶體不足，建議換成 StringBuilder
+ *       藥局名稱變數宣告 EX : val propertiesName = StringBuilder()
+ *       將每次獲取到的藥局名稱，多加跳行符號，存到變數中 EX : propertiesName.append(property.getString("name")+"\n")
+ *       最後取得所有藥局名稱資料，指定顯示到 TextView 元件中 EX : tv_pharmacies_data.text = propertiesName
+ */
 
 class MainActivity : AppCompatActivity() {
     companion object{
@@ -170,25 +178,27 @@ class MainActivity : AppCompatActivity() {
                 val obj = JSONObject(pharmaciesData)
 
                 // obj在透過getString方法,拿取KEY值,就會得到Value (Json格式的整包資料,拿取特定某一筆值)
-                Log.d(TAG, "type : ${obj.getString("type")}")
+//                Log.d(TAG, "type : ${obj.getString("type")}")
 
                 // features是一個陣列資料格式,所以轉成JSONArray【jsonObject的所有資料,在去拿features】
                 val featuresArray = JSONArray(obj.getString("features"))
 
                 // for迴圈,i介於起訖點從第0筆到最後一筆(featuresArray.length()) 【featuresArray陣列用for迴圈,在去拿每一筆的properties裡面的name & phone & address】
+                val propertiesName = StringBuilder() // 字串池(藥局名稱), New出一個StringBuilder物件;錯誤示範(當資料量大時,會OOM)EX : val propertiesName : String
                 for (i in 0 until featuresArray.length()){
                     val properties = featuresArray.getJSONObject(i).getString("properties") // 取得features(陣列)裡面的properties(object)
                     val property = JSONObject(properties)// 取得properties(object)裡面的name , phone , address
-                    Log.d(TAG, "第${i}間藥局: ")
-                    Log.d(TAG, "藥局名稱 : ${property.getString("name")}")
-                    Log.d(TAG, "電話 : ${property.getString("phone")}")
-                    Log.d(TAG, "地址 : ${property.getString("address")}")
+//                    Log.d(TAG, "第${i}間藥局: ")
+//                    Log.d(TAG, "藥局名稱 : ${property.getString("name")}")
+//                    Log.d(TAG, "電話 : ${property.getString("phone")}")
+//                    Log.d(TAG, "地址 : ${property.getString("address")}")
+                    propertiesName.append(property.getString("name")+"\n") // 字串池(藥局名稱),將每一筆藥局名稱添加進去,並且每一筆都要換行
                 }
 
                 //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來
                 runOnUiThread {
                     //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中
-                    tv_pharmacies_data.text = pharmaciesData
+                    tv_pharmacies_data.text = propertiesName
                 }
             }
         })
