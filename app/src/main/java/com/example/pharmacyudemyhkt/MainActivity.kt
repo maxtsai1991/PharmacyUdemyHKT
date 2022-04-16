@@ -178,6 +178,23 @@ import java.lang.StringBuilder
  *  而如果我們想要印出資料，可以寫成這樣： Log.d(TAG, "my_type: ${pharmacyInfo.my_type}")
  *  輸出結果 : my_type: FeatureCollection
  */
+
+/**
+ *  3-22 使用GSON解析每間藥局名稱與電話
+ *      層次中最需要注意的是，大括號 object {} 與中括號 array []，層次概念。瞭解之後，我們就可以透過 for 迴圈，取出每一間藥局名稱,電話,地址。
+ *          val pharmaciesData = response.body?.string()
+ *          val pharmacyInfo = Gson().fromJson(pharmaciesData, PharmacyInfo::class.java)
+ *
+ *          for (i in pharmacyInfo.features) {
+ *              Log.d(TAG, "藥局名稱: ${i.property.name}")
+ *              Log.d(TAG, "藥局電話 : ${i.property.phone}");
+ *              Log.d(TAG, "藥局地址 : ${i.property.address}");
+ *          }
+ *       輸出結果 :
+ *              D/MainActivity: 藥局名稱 : 理得藥局
+ *              D/MainActivity: 藥局電話 : (02)28289680
+ *              D/MainActivity: 藥局地址 : 臺北市北投區石牌路１段１５０號
+ */
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -236,6 +253,11 @@ class MainActivity : AppCompatActivity() {
                 val pharmacyInfo = Gson().fromJson(pharmaciesData,PharmacyInfo::class.java) // .fromJson(資料來源 , 希望把資料來源轉換成怎樣的格式,希望轉換成PharmacyInfo類別)
                 Log.d(TAG, "my_type(Gson) : ${pharmacyInfo.my_type}"); // 拿出pharmacyInfo資料裡面的type欄位Values值
 
+                for(i in pharmacyInfo.features){
+                    Log.d(TAG, "藥局名稱 : ${i.property.name}");
+                    Log.d(TAG, "藥局電話 : ${i.property.phone}");
+                    Log.d(TAG, "藥局地址 : ${i.property.address}");
+                }
 
                 /**
                  * Json寫法
