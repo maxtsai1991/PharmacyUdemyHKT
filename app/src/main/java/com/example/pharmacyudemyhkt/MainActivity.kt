@@ -3,6 +3,8 @@ package com.example.pharmacyudemyhkt
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.pharmacyudemyhkt.data.PharmacyInfo
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONArray
@@ -151,6 +153,31 @@ import java.lang.StringBuilder
  *              throw new RuntimeException(e);
  *          }
  */
+
+/**
+ *  3-21 GSON使用介紹
+ *  添加 Gson 依賴庫 (dependencies) : implementation 'com.google.code.gson:gson:2.8.6'
+ *  JSON 資料轉換成 Gson 是透過 Gson 提供的 fromJson(String json, Class<T> classOfT) 這個方法。其中，fromJson 第一個欄位，要帶入的即是我們透過 Okhttp 獲取到的資料，第二個欄位，需帶入我們自己定義的類別。
+ *
+ *  pharmaciesData 為 Okhttp 獲取到的資料
+ *      val pharmaciesData = response.body?.string()
+ *  PharmacyInfo 是我們自定義類別
+ *      val pharmacyInfo = Gson().fromJson(pharmaciesData, PharmacyInfo::class.java)
+ *
+ *  JSON 資料轉換成 Gson，仍須注意的是資料層次概念以 口罩資料 為例，若我們要取得最外層資料，如：「 “type”: “FeatureCollection”」，我們可以寫成這樣：
+ *      class PharmacyInfo(
+ *          @SerializedName("type")
+ *          val type: String
+ *      )
+ *
+ *  SerializedName 裡面要填的是，真實資料中的名稱，我們要獲取 type 所以填 type，所以寫成「@SerializedName(“type”)」以此類推。而如果你不喜歡，原本資料定義的名稱，你可以自定義常數值名稱，例如，想改成 my_type，就可以寫成這樣：
+ *      class PharmacyInfo(
+ *          @SerializedName("type")
+ *          val my_type: String
+ *      )
+ *  而如果我們想要印出資料，可以寫成這樣： Log.d(TAG, "my_type: ${pharmacyInfo.my_type}")
+ *  輸出結果 : my_type: FeatureCollection
+ */
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -202,12 +229,23 @@ class MainActivity : AppCompatActivity() {
                 val pharmaciesData : String? = response.body?.string()
 //                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
 
+                /**
+                 * Gson寫法
+                 * 使用Gson,不用特別處理API資料是否為空值(EX : xxx.isNull(type)) 及 有無欄位的事件處理(EX : xxx.has(type)) , 因為如果該欄位不存在,最多回饋給你null , null有兩種可能 : 1. 一種是真的沒有資料 2. 另一種是欄位名稱(EX : type)打錯,要打得跟API欄位名稱一樣
+                 */
+                val pharmacyInfo = Gson().fromJson(pharmaciesData,PharmacyInfo::class.java) // .fromJson(資料來源 , 希望把資料來源轉換成怎樣的格式,希望轉換成PharmacyInfo類別)
+                Log.d(TAG, "my_type(Gson) : ${pharmacyInfo.my_type}"); // 拿出pharmacyInfo資料裡面的type欄位Values值
+
+
+                /**
+                 * Json寫法
+                 */
                 // API拿到的字串資料(整包資料),透過JSONOBJECT方法轉換成jsonobject格式,再存到obj 【所有資料轉成jsonObject】
                 val obj = JSONObject(pharmaciesData)
 
                 // 當API資料(obj)發生JSONException or Exception , 則印出例外訊息 (防止例外而閃退APP)
                 try {
-                    // 如果API資料不為空值(!obj.isNull),也有typeeeee key,就LOG出來 , 否則就LOG出"沒有這個值"的字串
+                    // 如果API資料不為空值(!obj.isNull),也有"typeeeee"key值,就LOG出來(才去解析該筆資料),否則就LOG出"沒有這個值"的字串
                     if(!obj.isNull("typeeeee")){
                         Log.d(TAG,"type : ${obj.getString("typeeeee")}")
                     }else{
@@ -220,7 +258,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // obj在透過getString方法,拿取KEY值,就會得到Value (Json格式的整包資料,拿取特定某一筆值)
-                Log.d(TAG, "type : ${obj.getString("type")}")
+                Log.d(TAG, "type(Json) : ${obj.getString("type")}")
 
                 // features是一個陣列資料格式,所以轉成JSONArray【jsonObject的所有資料,在去拿features】
                 val featuresArray = JSONArray(obj.getString("features"))
