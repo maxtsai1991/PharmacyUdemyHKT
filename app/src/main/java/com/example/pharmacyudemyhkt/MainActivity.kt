@@ -195,6 +195,14 @@ import java.lang.StringBuilder
  *              D/MainActivity: 藥局電話 : (02)28289680
  *              D/MainActivity: 藥局地址 : 臺北市北投區石牌路１段１５０號
  */
+
+/**
+ *  3-23 JSON To Class外掛套件安裝與使用介紹
+ *      安裝外掛套件：「JSON To Kotlin Class」，快速將 JSON 資料轉換成 Class
+ *      此AutoGeneratePharmacyInfo.kt檔案,是由JSON To Kotlin Class外掛套件產生出來,因已經有PharmacyInfo.kt,所以就不需要使用自動產生的,只是練習自動產生的方式,因而註解掉
+ *      有一個重點 !!! -- 這些 data class在Kotlin裡面,是可以寫在同一個類別裡面 , 而在Java 都需要各別寫在不同類別檔案 --
+ */
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
