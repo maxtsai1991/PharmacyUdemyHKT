@@ -246,10 +246,35 @@ import java.lang.StringBuilder
                     binding.progressBar.visibility = View.GONE
  */
 
+/**
+ *  3-27 如何封裝 OKHttp ?
+ *       A : 使用單例模式(Singleton)確保 OkHttpClient只有一個實例存在，減少連線反應延遲與降低記憶體空間，改善提高整體運行效能。這次只簡單封裝 get 功能
+ *       Util命名補充 :
+ *          如果是一個很常用的工具,命名規則就會在類別名後面加個Util
+ *
+ *       companion object 補充說明 :
+ *           1.  類似Java的靜態(Static關鍵字,因為Kotlin沒有類似Java的Static關鍵字用法)
+ *           2.  通常單例也會寫在裡面 EX :   val mOkHttpUtil: OkHttpUtil by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {  OkHttpUtil()  }
+ *
+ *       init 補充說明 :
+ *           1.  要初始化(New出物件)的程式碼可以寫在裡面 EX : mOkHttpClient = OkHttpClient().newBuilder().build()    // 宣告 OkHttpClient
+ *           2.  只有在第一次的時候,被呼叫起來的時候才會去跑init{}方法,之後的人都不會去跑init{}方法,除非init裡面的物件被銷毀掉,如果被銷毀掉就回再重作一遍
+ *
+ *       Callback補充 :
+ *          假設A去呼叫B,B會透過一個介面(interface),再把資料帶回去給A
+ *          以該章節為例,Activity就是A,Util就是B ,Util這個工具,如何回傳給Activity,就是透過interface回傳
+ */
 class MainActivity : AppCompatActivity() {
+    /**
+     * companion object 補充說明 :
+     *          1.  類似Java的靜態(Static關鍵字,因為Kotlin沒有類似Java的Static關鍵字用法)
+     *          2.  通常單例也會寫在裡面
+     */
     companion object{
-        val TAG = MainActivity::class.java.simpleName
+
     }
+
+    val TAG = MainActivity::class.java.simpleName
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -303,6 +328,7 @@ class MainActivity : AppCompatActivity() {
 
         //執行 Call 連線後，採用 enqueue 非同步方式，獲取到回應的結果資料 , 實作兩個覆寫方法(失敗&成功)
         call.enqueue(object : Callback{
+
             override fun onFailure(call: Call, e: IOException) {
                 Log.d(TAG,"onFailure: $e")
 
