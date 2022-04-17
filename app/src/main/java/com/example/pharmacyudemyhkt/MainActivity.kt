@@ -3,6 +3,7 @@ package com.example.pharmacyudemyhkt
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.example.pharmacyudemyhkt.data.PharmacyInfo
 import com.example.pharmacyudemyhkt.databinding.ActivityMainBinding
 import com.google.gson.Gson
@@ -226,8 +227,25 @@ import java.lang.StringBuilder
  *
  *       6. 測試TextView使用ViewBing方式更改原文字 :
  *                   binding.tv1.text = "MAX專案實作"
- *
  */
+
+/**
+ *  3-25 如何顯示(ProgressBar)讀取API資料顯示忙碌圈圈
+ *          1. 畫面佈局中，加入忙碌圈圈(ProgressBar)元件 :
+                    <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            2.  顯示忙碌圈圈
+                    binding.progressBar.visibility = View.VISIBLE
+            3.  關閉忙碌圈圈
+                    binding.progressBar.visibility = View.GONE
+ */
+
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
@@ -252,6 +270,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPharmacyData() {
+
+        // 當還在讀取API資料時,顯示讀取圈圈
+        binding.progressBar.visibility = View.VISIBLE
+
         // GET請求使用方式 : 口罩地圖是使用GET請求,如要測試POST請求,需註解該方法
         getDemo()
 
@@ -283,6 +305,11 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback{
             override fun onFailure(call: Call, e: IOException) {
                 Log.d(TAG,"onFailure: $e")
+
+                // 當讀到API資料失敗時,不顯示讀取圈圈 , 控制UI上面操作要寫在runOnUiThread{}
+                runOnUiThread {
+                    binding.progressBar.visibility = View.GONE
+                }
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -341,10 +368,13 @@ class MainActivity : AppCompatActivity() {
                     propertiesName.append(property.getString("name")+"\n") // 字串池(藥局名稱),將每一筆藥局名稱添加進去,並且每一筆都要換行
                 }
 
-                //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來
+                //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來 (控制UI上面操作要寫在runOnUiThread{})
                 runOnUiThread {
                     //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中
                     tv_pharmacies_data.text = propertiesName
+
+                    // 當讀到API資料成功時,不顯示讀取圈圈
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         })
