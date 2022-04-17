@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.example.pharmacyudemyhkt.OkHttpUtil.Companion.mOkHttpUtil
 import com.example.pharmacyudemyhkt.data.PharmacyInfo
 import com.example.pharmacyudemyhkt.databinding.ActivityMainBinding
 import com.google.gson.Gson
@@ -247,7 +248,7 @@ import java.lang.StringBuilder
  */
 
 /**
- *  3-27 如何封裝 OKHttp ?
+ *  3-27 如何封裝 OKHttp ? (參考講義:https://tw-hkt.blogspot.com/2021/01/android-okhttp.html)
  *       A : 使用單例模式(Singleton)確保 OkHttpClient只有一個實例存在，減少連線反應延遲與降低記憶體空間，改善提高整體運行效能。這次只簡單封裝 get 功能
  *       Util命名補充 :
  *          如果是一個很常用的工具,命名規則就會在類別名後面加個Util
@@ -264,6 +265,29 @@ import java.lang.StringBuilder
  *          假設A去呼叫B,B會透過一個介面(interface),再把資料帶回去給A
  *          以該章節為例,Activity就是A,Util就是B ,Util這個工具,如何回傳給Activity,就是透過interface回傳
  */
+
+/**
+ *  3-28 如何使用我們封裝的OKHttp ? (參考講義:https://tw-hkt.blogspot.com/2021/01/android-okhttp.html)
+ *          自定義 OkHttpUtil，封裝 OkHttp，簡化繁雜步驟的程式碼，之後呼叫變得很簡單俐落
+ *          程式碼可參考該章節老師的講義 : https://tw-hkt.blogspot.com/2021/01/android-okhttp.html
+ *          使用方式 :
+                    val your_url_name = "your_url"
+                    mOkHttpUtil.getAsync(your_url_name, object : OkHttpUtil.ICallback {
+                        override fun onResponse(response: Response) {
+                            ...
+                        }
+                        override fun onFailure(e: okio.IOException) {
+                            ...
+                        }
+                    })
+ */
+
+/**
+ *  3-29 固定常數檔案Constants(常數)用途? (參考講義:https://tw-hkt.blogspot.com/2021/01/android-okhttp.html)
+ *          該章節變動補充說明 : 將OKHttp封裝起來(OkHttpUtil.kt) & 增加 Constants(Constants.kt)
+ *          未來會有很多常數固定資料，為了更好管理與維護，我們習慣會將常數資料，特別獨立出去放到如：Constants.kt。以這次口罩資料網址為例，我們就可以將它整理歸納寫到這個檔案裡。
+ *          而固定常數的命名風格，習慣全大寫，單字與單字之間透過底線區隔，如：PHARMACIES_DATA_URL
+ */
 class MainActivity : AppCompatActivity() {
     /**
      * companion object 補充說明 :
@@ -279,8 +303,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_main) // 因使用View Binding,所以不須使用原始寫法來設定Layout
 
-//        setContentView(R.layout.activity_main)
         /**
          * 使用元件綁定View Binding的MainActivity Layout綁定畫面宣告
          */
@@ -295,7 +319,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPharmacyData() {
-
         // 當還在讀取API資料時,顯示讀取圈圈
         binding.progressBar.visibility = View.VISIBLE
 
@@ -311,41 +334,20 @@ class MainActivity : AppCompatActivity() {
      */
     private fun getDemo() {
         /**
-         * 口罩資料網址 (資料來源)
-         *      部分藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json"
-         *      完整藥局口罩資料(其中一天) : "https://raw.githubusercontent.com/thishkt/pharmacies/master/data/info.json"
+         * 使用OKHttp封裝,並且用了Callback,以及將API URL放在常用常數檔裡,PHARMACIES_DATA_URL(口罩資料網址)
          */
-        val pharmaciesDataUrl = "https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json"
+        mOkHttpUtil.getAsync(PHARMACIES_DATA_URL, object : OkHttpUtil.ICallback {
+            override fun onResponse(response: Response) {
+                // 藥局名稱變數宣告 (New出一個StringBuilder物件;錯誤示範(當資料量大時,會OOM)EX : val propertiesName : String)
+                val propertiesName = StringBuilder()
 
-        //Part 1: 宣告(設定)OkHttpClient
-        val okHttpClient : OkHttpClient = OkHttpClient().newBuilder().build()
-
-        //Part 2: 宣告(設定)Request，要求要連到指定網址 ,透過GET方式
-        val request : Request = Request.Builder().url(pharmaciesDataUrl).get().build()
-
-        //Part 3: 宣告 Call ,要連線到哪個網址,用怎麼樣方式去做連線,把上面的request塞給newCall
-        val call : Call = okHttpClient.newCall(request)
-
-        //執行 Call 連線後，採用 enqueue 非同步方式，獲取到回應的結果資料 , 實作兩個覆寫方法(失敗&成功)
-        call.enqueue(object : Callback{
-
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d(TAG,"onFailure: $e")
-
-                // 當讀到API資料失敗時,不顯示讀取圈圈 , 控制UI上面操作要寫在runOnUiThread{}
-                runOnUiThread {
-                    binding.progressBar.visibility = View.GONE
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
                 // 將整包資料拉下來存起來 【API所有資料】
                 val pharmaciesData : String? = response.body?.string()
 //                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
 
                 /**
-                 * Gson寫法
-                 * 使用Gson,不用特別處理API資料是否為空值(EX : xxx.isNull(type)) 及 有無欄位的事件處理(EX : xxx.has(type)) , 因為如果該欄位不存在,最多回饋給你null , null有兩種可能 : 1. 一種是真的沒有資料 2. 另一種是欄位名稱(EX : type)打錯,要打得跟API欄位名稱一樣
+                 * Gson寫法 : 使用Gson,不用特別處理API資料是否為空值(EX : xxx.isNull(type)) 及 有無欄位的事件處理(EX : xxx.has(type)) ,
+                 * 因為如果該欄位不存在,最多回饋給你null , null有兩種可能 : 1. 一種是真的沒有資料 2. 另一種是欄位名稱(EX : type)打錯,要打得跟API欄位名稱一樣
                  */
                 val pharmacyInfo = Gson().fromJson(pharmaciesData,PharmacyInfo::class.java) // .fromJson(資料來源 , 希望把資料來源轉換成怎樣的格式,希望轉換成PharmacyInfo類別)
                 Log.d(TAG, "my_type(Gson) : ${pharmacyInfo.my_type}"); // 拿出pharmacyInfo資料裡面的type欄位Values值
@@ -383,7 +385,6 @@ class MainActivity : AppCompatActivity() {
                 val featuresArray = JSONArray(obj.getString("features"))
 
                 // for迴圈,i介於起訖點從第0筆到最後一筆(featuresArray.length()) 【featuresArray陣列用for迴圈,在去拿每一筆的properties裡面的name & phone & address】
-                val propertiesName = StringBuilder() // 字串池(藥局名稱), New出一個StringBuilder物件;錯誤示範(當資料量大時,會OOM)EX : val propertiesName : String
                 for (i in 0 until featuresArray.length()){
                     val properties = featuresArray.getJSONObject(i).getString("properties") // 取得features(陣列)裡面的properties(object)
                     val property = JSONObject(properties)// 取得properties(object)裡面的name , phone , address
@@ -391,7 +392,7 @@ class MainActivity : AppCompatActivity() {
 //                    Log.d(TAG, "藥局名稱 : ${property.getString("name")}")
 //                    Log.d(TAG, "電話 : ${property.getString("phone")}")
 //                    Log.d(TAG, "地址 : ${property.getString("address")}")
-                    propertiesName.append(property.getString("name")+"\n") // 字串池(藥局名稱),將每一筆藥局名稱添加進去,並且每一筆都要換行
+                    propertiesName.append(property.getString("name")+"\n") // propertiesName字串池(藥局名稱),將每一筆藥局名稱添加進去,並且每一筆都要換行
                 }
 
                 //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來 (控制UI上面操作要寫在runOnUiThread{})
@@ -400,6 +401,15 @@ class MainActivity : AppCompatActivity() {
                     tv_pharmacies_data.text = propertiesName
 
                     // 當讀到API資料成功時,不顯示讀取圈圈
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
+
+            override fun onFailure(e: okio.IOException) {
+                Log.d(TAG,"onFailure: $e")
+
+                // 當讀到API資料失敗時,不顯示讀取圈圈 , 控制UI上面操作要寫在runOnUiThread{}
+                runOnUiThread {
                     binding.progressBar.visibility = View.GONE
                 }
             }
