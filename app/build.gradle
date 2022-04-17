@@ -45,6 +45,9 @@ dependencies {
     // 3-21 GSON  (參考網址 : https://tw-hkt.blogspot.com/2020/12/android-gson.html)
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    // 4-31 RecyclerView (參考網址 : https://tw-hkt.blogspot.com/2021/01/android-recyclerview.html)
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
     // 內建,創專案就有的Libs
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
