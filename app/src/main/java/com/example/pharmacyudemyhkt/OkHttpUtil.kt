@@ -3,6 +3,11 @@ package com.example.pharmacyudemyhkt
 import okhttp3.*
 import java.io.IOException
 
+/**
+ * 該OkHttpUtil類別說明:
+ *      自定義 OkHttpUtil，封裝OkHttp，簡化繁雜步驟的程式碼，之後呼叫變得很簡單俐落
+ *      程式碼可參考該章節老師的講義 : https://tw-hkt.blogspot.com/2021/01/android-okhttp.html
+ */
 class OkHttpUtil {
     private var mOkHttpClient: OkHttpClient? = null
 
@@ -40,8 +45,6 @@ class OkHttpUtil {
                 callback.onResponse(response)
             }
         })
-
-
     }
 
 
