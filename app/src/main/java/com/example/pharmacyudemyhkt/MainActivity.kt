@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.pharmacyudemyhkt.data.PharmacyInfo
+import com.example.pharmacyudemyhkt.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -203,16 +204,51 @@ import java.lang.StringBuilder
  *      有一個重點 !!! -- 這些 data class在Kotlin裡面,是可以寫在同一個類別裡面 , 而在Java 都需要各別寫在不同類別檔案 --
  */
 
+/**
+ *  3-24 補充課程:如何使用元件綁定View Binding
+ *       1. build.gradle(Module) 添加 :
+ *          //Android Studio 4.0 或更高版本
+ *              android {
+                        ...
+                        buildFeatures {
+                        viewBinding true
+                        }
+                }
+ *
+ *       2. activity_main.xml 放一個測試用的TextView , 新增一個 id 屬性，屬性值設定為為 tv1
+ *       3. 在MainActivity 使用方式 :
+ *          4.  添加屬性 : private lateinit var binding: ActivityMainBinding
+ *          5.  添加在onCreate裡,並註解調原本的設定Layout程式碼 :
+ *                   //setContentView(R.layout.activity_main)
+ *
+ *                   binding = ActivityMainBinding.inflate(layoutInflater)
+ *                   setContentView(binding.root) // 點擊root可進到MainActivity Layout畫面 , 等同activity_main ,因改用View Binding的原因
+ *
+ *       6. 測試TextView使用ViewBing方式更改原文字 :
+ *                   binding.tv1.text = "MAX專案實作"
+ *
+ */
 class MainActivity : AppCompatActivity() {
     companion object{
         val TAG = MainActivity::class.java.simpleName
     }
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        getPharmacyData() // 取得口罩地圖資料的方法
+//        setContentView(R.layout.activity_main)
+        /**
+         * 使用元件綁定View Binding的MainActivity Layout綁定畫面宣告
+         */
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root) // 點擊root可進到MainActivity Layout畫面 , 等同activity_main ,因改用View Binding的原因
+
+        // 測試TextView的View Binding方式
+        binding.tv1.text = "MAX專案實作"
+
+        // 取得口罩地圖資料的方法
+        getPharmacyData()
     }
 
     private fun getPharmacyData() {

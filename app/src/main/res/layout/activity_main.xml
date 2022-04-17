@@ -7,15 +7,30 @@
     tools:context=".MainActivity">
 
     <!-- 在 TextView 外包上一層 ScrollView ，當資料超出畫面，可滾動捲軸，看到更多資料內容-->
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="測試viewBinding"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_pharmacies_data"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="口罩地圖" />
+        <TextView
+            android:id="@+id/tv_pharmacies_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="口罩地圖" />
 
     </ScrollView>
 
