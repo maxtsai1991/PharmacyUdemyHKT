@@ -1,21 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--    xmlns:android & xmlns:app 屬性都要放最外層Layout-->
+<?xml version="1.0" encoding="utf-8"?><!--    xmlns:android & xmlns:app 屬性都要放最外層Layout-->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
     app:cardCornerRadius="8dp">
 
     <!--    android:clickable="true" 代表可以接受點擊  ;  android:focusable="true"  代表可聚焦的  ;  android:background="?android:attr/selectableItemBackground"    漣漪效果-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:background="?android:attr/selectableItemBackground"
         android:paddingBottom="10dp">
 
 
@@ -47,19 +46,21 @@
             android:id="@+id/layout_adult"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_amount_info"
+            android:padding="10dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
-            app:layout_constraintRight_toLeftOf="@+id/layout_child">
+            app:layout_constraintRight_toLeftOf="@+id/layout_child"
+            app:layout_constraintTop_toBottomOf="@id/tv_name">
 
             <TextView
                 android:id="@+id/tv_adult"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
                 android:text="成人口罩"
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_adult_amount"
@@ -69,7 +70,7 @@
                 android:textSize="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_adult"/>
+                app:layout_constraintTop_toBottomOf="@+id/tv_adult" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,19 +78,21 @@
             android:id="@+id/layout_child"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_amount_info"
+            android:padding="10dp"
             app:layout_constraintLeft_toRightOf="@+id/layout_adult"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
-            app:layout_constraintRight_toRightOf="parent">
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_name">
 
             <TextView
                 android:id="@+id/tv_child"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
                 android:text="小孩口罩"
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_child_amount"
@@ -99,7 +102,7 @@
                 android:textSize="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_child"/>
+                app:layout_constraintTop_toBottomOf="@+id/tv_child" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

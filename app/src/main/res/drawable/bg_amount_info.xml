@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--    其中 shape 可以設定屬性為 rectangle 為矩形，oval 為圓形或橢圓形，line 為實線或虛線，ring 為環形。-->
+<!--    然後在項目佈局 layout/item_view.xml 的 layout_adult、layout_child 背景樣式設定為 bg_amount_info 並加入周圍間距。-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#BC9EF3" />
+    <corners android:radius="5dp" />
+</shape>
