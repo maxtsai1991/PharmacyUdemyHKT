@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pharmacyudemyhkt.OkHttpUtil.Companion.mOkHttpUtil
 import com.example.pharmacyudemyhkt.data.PharmacyInfo
 import com.example.pharmacyudemyhkt.databinding.ActivityMainBinding
@@ -288,6 +290,14 @@ import java.lang.StringBuilder
  *          未來會有很多常數固定資料，為了更好管理與維護，我們習慣會將常數資料，特別獨立出去放到如：Constants.kt。以這次口罩資料網址為例，我們就可以將它整理歸納寫到這個檔案裡。
  *          而固定常數的命名風格，習慣全大寫，單字與單字之間透過底線區隔，如：PHARMACIES_DATA_URL
  */
+
+/**
+ *  3-34 如何使用RecyclerView結合自定義Adapter資料顯示
+ *      1. 拿掉先前章節在activity_main.xml裡面的ScrollView & TextView(id:tv_pharmacies_data), 加上RecyclerView(將ScrollView取代成RecyclerView , id : recycler_view)
+ *      2. 設定RecyclerView EX : initView()
+ *      3. 指定API資料給Adapter EX : viewAdapter.pharmacyList = pharmacyInfo.features
+ *      4. 確認Adapter的onBindViewHolder EX : holder.itemViewBinding.tvName.text = pharmacyList[position].property.name  // 藥局名稱
+ */
 class MainActivity : AppCompatActivity() {
     /**
      * companion object 補充說明 :
@@ -299,7 +309,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     val TAG = MainActivity::class.java.simpleName
+    // lateinit 補充說明 : 暫時先宣告變數,實際使用它的時候,在把它初始化
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var viewAdapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -314,8 +327,29 @@ class MainActivity : AppCompatActivity() {
         // 測試TextView的View Binding方式
         binding.tv1.text = "MAX專案實作"
 
+        // RecyclerView設定
+        initView()
+
         // 取得口罩地圖資料的方法
         getPharmacyData()
+    }
+
+    private fun initView() {
+        // 定義 LayoutManager 為 LinearLayoutManager (決定RecyclerView如何顯示)
+        viewManager =  LinearLayoutManager(this)
+        // 自定義 Adapte 為 MainAdapter，稍後再定義 MainAdapter 這個類別
+        viewAdapter = MainAdapter()
+
+        /**
+         * 定義從佈局當中，拿到 recycler_view 元件 , 透過 kotlin 的 apply 語法糖，設定 LayoutManager 和 Adapter
+         *      binding.recyclerView.apply { } 說明:
+         *          這樣寫可省去裡面程式碼還要加binding.recyclerView EX :  binding.recyclerView.layoutManager or binding.recyclerView.adapter ,
+         *          就不用寫成傳統寫法
+         */
+        binding.recyclerView.apply {
+            layoutManager = viewManager // 傳統寫法 : binding.recyclerView.layoutManager = viewManager
+            adapter = viewAdapter // 傳統寫法 : binding.recyclerView.adapter = viewAdapter
+        }
     }
 
     private fun getPharmacyData() {
@@ -342,21 +376,23 @@ class MainActivity : AppCompatActivity() {
                 val propertiesName = StringBuilder()
 
                 // 將整包資料拉下來存起來 【API所有資料】
-                val pharmaciesData : String? = response.body?.string()
-//                Log.d(TAG, "onResponse: $pharmaciesData") // body有可能為空null,所以要加?(問號)
+                val pharmaciesData : String? = response.body?.string() // body有可能為空null,所以要加?(問號)
 
                 /**
-                 * Gson寫法 : 使用Gson,不用特別處理API資料是否為空值(EX : xxx.isNull(type)) 及 有無欄位的事件處理(EX : xxx.has(type)) ,
+                 * Gson寫法 :
+                 * 使用Gson,不用特別處理API資料是否為空值(EX : xxx.isNull(type)) 及 有無欄位的事件處理(EX : xxx.has(type)) ,
                  * 因為如果該欄位不存在,最多回饋給你null , null有兩種可能 : 1. 一種是真的沒有資料 2. 另一種是欄位名稱(EX : type)打錯,要打得跟API欄位名稱一樣
                  */
                 val pharmacyInfo = Gson().fromJson(pharmaciesData,PharmacyInfo::class.java) // .fromJson(資料來源 , 希望把資料來源轉換成怎樣的格式,希望轉換成PharmacyInfo類別)
-                Log.d(TAG, "my_type(Gson) : ${pharmacyInfo.my_type}"); // 拿出pharmacyInfo資料裡面的type欄位Values值
+//                Log.d(TAG, "my_type(Gson) : ${pharmacyInfo.my_type}"); // 拿出pharmacyInfo資料裡面的type欄位Values值
 
-                for(i in pharmacyInfo.features){
-                    Log.d(TAG, "藥局名稱 : ${i.property.name}");
-                    Log.d(TAG, "藥局電話 : ${i.property.phone}");
-                    Log.d(TAG, "藥局地址 : ${i.property.address}");
-                }
+                //會註解掉是因為在第四章節前用ScrollView ,第四章開始用RecyclerView就不需要這些程式碼
+//                for(i in pharmacyInfo.features){
+//                    propertiesName.append(i.property.name + "\n")
+//                    Log.d(TAG, "藥局名稱 : ${i.property.name}");
+//                    Log.d(TAG, "藥局電話 : ${i.property.phone}");
+//                    Log.d(TAG, "藥局地址 : ${i.property.address}");
+//                }
 
                 /**
                  * Json寫法
@@ -397,8 +433,11 @@ class MainActivity : AppCompatActivity() {
 
                 //注意要設定UI (tv_pharmacies_data.text) ，需要執行在UiThread裡面(runOnUiThread { })，否則會噴錯誤 ; 重點:當解析的資料要呈現到畫面上,必須要用runOnUiThread { }包起來 (控制UI上面操作要寫在runOnUiThread{})
                 runOnUiThread {
-                    //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中
-                    tv_pharmacies_data.text = propertiesName
+                    //將 Okhttp 獲取到的回應值，指定到畫面的 TextView 元件中 (註解掉是因為在第四章節前用ScrollView裡面有包一個TextView(tv_pharmacies_data),第四章開始用RecyclerView就不需要這些程式碼)
+//                    tv_pharmacies_data.text = propertiesName
+
+                    //將下載的口罩資料，指定給 MainAdapter , pharmacyInfo是下載回來的資料,主要是拿features的資料
+                    viewAdapter.pharmacyList = pharmacyInfo.features
 
                     // 當讀到API資料成功時,不顯示讀取圈圈
                     binding.progressBar.visibility = View.GONE

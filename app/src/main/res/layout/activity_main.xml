@@ -15,24 +15,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 在 TextView 外包上一層 ScrollView ，當資料超出畫面，可滾動捲軸，看到更多資料內容-->
-    <ScrollView
-        android:id="@+id/scrollView2"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tv_pharmacies_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="口罩地圖" />
-
-    </ScrollView>
+        app:layout_constraintTop_toTopOf="parent" />
 
 <!--    讀取資料的轉圈-->
     <ProgressBar

@@ -1,7 +1,9 @@
 package com.example.pharmacyudemyhkt
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pharmacyudemyhkt.data.Feature
 import com.example.pharmacyudemyhkt.databinding.ItemViewBinding
@@ -25,12 +27,11 @@ import com.example.pharmacyudemyhkt.databinding.ItemViewBinding
 
 class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
 
-    var pharmacyList : List<Feature> = emptyList()
+    var pharmacyList : List<Feature> = emptyList() // 一開始預設是空的列表
         set(value) {
             field = value           // field指的就是pharmacyList
             notifyDataSetChanged()  // 刷新(如果pharmacyList有資料進來,那我們就去通知RecyclerView有資料變化,去做資料的更新)
         }
-
 
     class MyViewHolder (val itemViewBinding: ItemViewBinding) : RecyclerView.ViewHolder(itemViewBinding.root)
 
@@ -41,10 +42,15 @@ class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         /**
-         * tvName指的就是item_view.xml的藥局名稱(TextView ID) , tvName(TextView的ID)會自動生成是因為View Binding
-         * text指的是Setter/Getter ,在Kotlin則是直接text即可
+         * tvName 指的就是item_view.xml的藥局名稱(TextView ID) , tvName(TextView的ID)會自動生成是因為View Binding
+         * text 指的是Setter/Getter ,在Kotlin則是直接text即可
+         * pharmacyList[position].property.name 指的是拿pharmacyList所在位置([position])裡面的property裡面的name(藥局名稱)
+         * 如要在添加RecyclerView顯示的資訊 :
+         *      1. 在item_view.xml添加新的TextView並給予ID
+         *      2. 在MainAdapter的onBindViewHolder添加holder.itemViewBinding.tvPhone.text = pharmacyList[position].property.phone (注意:要去檢查PharmacyInfo.kt)
          */
-        holder.itemViewBinding.tvName.text = ""
+        holder.itemViewBinding.tvName.text = pharmacyList[position].property.name  // 藥局名稱
+        holder.itemViewBinding.tvPhone.text = pharmacyList[position].property.phone // 藥局電話
     }
 
     override fun getItemCount(): Int {
