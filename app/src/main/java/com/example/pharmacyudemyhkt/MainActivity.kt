@@ -324,6 +324,10 @@ import java.lang.StringBuilder
  *          5-3.   實作/覆寫onItemClickListener方法,並簡易測試使用Log方式  EX :   override fun onItemClickListener(data: Feature) { Log.d(TAG, data.property.name); }
  */
 
+/**
+ *  第五節(Kotlin過濾&分組語法) 、 第六節(UI使用者介面元件-Spinner下拉式選單) 、 第七節(Google Map地圖應用) 未完成 ~ 待續!!
+ */
+
 class MainActivity : AppCompatActivity(),MainAdapter.IItemClickListener {
     /**
      * companion object 補充說明 :
