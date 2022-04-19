@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pharmacyudemyhkt">
-
-<!--   3-8 OkHttp章節, 連線網路  -->
+    <!-- 3-8 OkHttp章節, 連線網路 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,6 +11,9 @@
         android:roundIcon="@drawable/appicon_placeholder"
         android:supportsRtl="true"
         android:theme="@style/Theme.PharmacyUdemyHKT">
+        <activity
+            android:name=".PharmacyDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

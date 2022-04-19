@@ -1,5 +1,6 @@
 package com.example.pharmacyudemyhkt
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -526,6 +527,11 @@ class MainActivity : AppCompatActivity(),MainAdapter.IItemClickListener {
         Log.d(TAG, data.property.address);
         Log.d(TAG, data.property.mask_adult.toString());
         Log.d(TAG, data.property.mask_child.toString());
+
+        val intent = Intent(this,PharmacyDetailActivity::class.java) // Intent(從起頁,跳到迄頁) , Intent翻譯:意圖
+        intent.putExtra("data",data)
+        startActivity(intent)
+
     }
 
 }

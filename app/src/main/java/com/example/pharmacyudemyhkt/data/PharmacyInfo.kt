@@ -1,6 +1,7 @@
 package com.example.pharmacyudemyhkt.data
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class PharmacyInfo (
     // API資料網址 : https://raw.githubusercontent.com/thishkt/pharmacies/fafd14667432171227be3e2461cf3b74f9cb9b67/data/info.json
@@ -11,11 +12,12 @@ class PharmacyInfo (
 
     @SerializedName("features")
     val features: List<Feature>
-    )
+    ):Serializable
+
 class Feature(
     @SerializedName("properties")
     val property: Property
-)
+):Serializable
 
 class Property(
     @SerializedName("name") // 藥局名稱
@@ -32,4 +34,4 @@ class Property(
 
     @SerializedName("mask_child") // 小孩口罩數量
     val mask_child: Int,
-)
+):Serializable
