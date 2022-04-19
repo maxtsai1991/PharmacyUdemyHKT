@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pharmacyudemyhkt.OkHttpUtil.Companion.mOkHttpUtil
@@ -298,6 +299,17 @@ import java.lang.StringBuilder
  *      3. 指定API資料給Adapter EX : viewAdapter.pharmacyList = pharmacyInfo.features
  *      4. 確認Adapter的onBindViewHolder EX : holder.itemViewBinding.tvName.text = pharmacyList[position].property.name  // 藥局名稱
  */
+
+/**
+ *  3-35 如何設定RecyclerView顯示分隔線與點擊漣漪效果 (https://tw-hkt.blogspot.com/2021/01/android-recyclerview.html)
+ *          設定項目分隔線 (divider) : addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL))
+ *          點擊漣漪效果(Ripple Effect) (在item_view.xml設定):
+ *                                      android:clickable="true"
+ *                                      android:focusable="true"
+ *                                      android:background="?android:attr/selectableItemBackground"
+ *
+ *
+ */
 class MainActivity : AppCompatActivity() {
     /**
      * companion object 補充說明 :
@@ -349,6 +361,7 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.apply {
             layoutManager = viewManager // 傳統寫法 : binding.recyclerView.layoutManager = viewManager
             adapter = viewAdapter // 傳統寫法 : binding.recyclerView.adapter = viewAdapter
+            addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL)) // 每個Item下的分隔線
         }
     }
 
