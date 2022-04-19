@@ -5,12 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <!--    android:clickable="true" 代表可以接受點擊  ;  android:focusable="true"  代表可聚焦的  ;  android:background="?android:attr/selectableItemBackground"    漣漪效果-->
     <TextView
         android:id="@+id/tv1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_horizontal"
         android:text="測試viewBinding"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#B3AAAA"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

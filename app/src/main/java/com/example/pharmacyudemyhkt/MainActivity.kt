@@ -293,7 +293,7 @@ import java.lang.StringBuilder
  */
 
 /**
- *  3-34 如何使用RecyclerView結合自定義Adapter資料顯示
+ *  4-34 如何使用RecyclerView結合自定義Adapter資料顯示
  *      1. 拿掉先前章節在activity_main.xml裡面的ScrollView & TextView(id:tv_pharmacies_data), 加上RecyclerView(將ScrollView取代成RecyclerView , id : recycler_view)
  *      2. 設定RecyclerView EX : initView()
  *      3. 指定API資料給Adapter EX : viewAdapter.pharmacyList = pharmacyInfo.features
@@ -301,13 +301,16 @@ import java.lang.StringBuilder
  */
 
 /**
- *  3-35 如何設定RecyclerView顯示分隔線與點擊漣漪效果 (https://tw-hkt.blogspot.com/2021/01/android-recyclerview.html)
+ *  4-35 如何設定RecyclerView顯示分隔線與點擊漣漪效果 (https://tw-hkt.blogspot.com/2021/01/android-recyclerview.html)
  *          設定項目分隔線 (divider) : addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL))
  *          點擊漣漪效果(Ripple Effect) (在item_view.xml設定):
  *                                      android:clickable="true"
  *                                      android:focusable="true"
  *                                      android:background="?android:attr/selectableItemBackground"
- *
+ */
+
+/**
+ *  4-36 RecyclerView 進階項目佈局 (https://tw-hkt.blogspot.com/2021/01/android-recyclerview_22.html)
  *
  */
 class MainActivity : AppCompatActivity() {
@@ -337,7 +340,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root) // 點擊root可進到MainActivity Layout畫面 , 等同activity_main ,因改用View Binding的原因
 
         // 測試TextView的View Binding方式
-        binding.tv1.text = "MAX專案實作"
+        binding.tv1.text = "-Max口罩地圖專案-"
 
         // RecyclerView設定
         initView()
