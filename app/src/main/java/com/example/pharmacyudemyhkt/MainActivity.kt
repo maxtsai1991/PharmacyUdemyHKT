@@ -364,7 +364,7 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.apply {
             layoutManager = viewManager // 傳統寫法 : binding.recyclerView.layoutManager = viewManager
             adapter = viewAdapter // 傳統寫法 : binding.recyclerView.adapter = viewAdapter
-            addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL)) // 每個Item下的分隔線
+//            addItemDecoration(DividerItemDecoration(this@MainActivity,DividerItemDecoration.VERTICAL)) // 每個Item下的分隔線 , 因4-39 改成CardView卡片式Layout , 所以不需要分隔線 , 因而註解掉
         }
     }
 

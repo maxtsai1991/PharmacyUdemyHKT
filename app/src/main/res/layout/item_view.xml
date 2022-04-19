@@ -1,100 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--    android:clickable="true" 代表可以接受點擊  ;  android:focusable="true"  代表可聚焦的  ;  android:background="?android:attr/selectableItemBackground"    漣漪效果-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--    xmlns:android & xmlns:app 屬性都要放最外層Layout-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
-    android:paddingBottom="10dp">
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="8dp">
 
-
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="藥局名稱"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#2A672D"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:text="藥局電話"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textColor="#2A672D"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_name"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <!--    android:clickable="true" 代表可以接受點擊  ;  android:focusable="true"  代表可聚焦的  ;  android:background="?android:attr/selectableItemBackground"    漣漪效果-->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_adult"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_name"
-        app:layout_constraintRight_toLeftOf="@+id/layout_child">
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingBottom="10dp">
+
 
         <TextView
-            android:id="@+id/tv_adult"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="成人口罩"
-            android:textSize="20dp"
-            android:textStyle="bold"/>
+            android:padding="10dp"
+            android:text="藥局名稱"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#2A672D"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_adult_amount"
+            android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="口罩數量"
-            android:textSize="16dp"
+            android:layout_marginTop="17dp"
+            android:text="藥局電話"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#2A672D"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_adult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_adult"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintRight_toLeftOf="@+id/layout_child">
+
+            <TextView
+                android:id="@+id/tv_adult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="成人口罩"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_adult_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="口罩數量"
+                android:textSize="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_adult"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_child"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/layout_adult"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <TextView
+                android:id="@+id/tv_child"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="小孩口罩"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_child_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="口罩數量"
+                android:textSize="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_child"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_child"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@+id/layout_adult"
-        app:layout_constraintTop_toBottomOf="@id/tv_name"
-        app:layout_constraintRight_toRightOf="parent">
+</androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tv_child"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="小孩口罩"
-            android:textSize="20dp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_child_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="口罩數量"
-            android:textSize="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_child"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
