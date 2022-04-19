@@ -25,5 +25,11 @@ class Property(
     val phone: String,
 
     @SerializedName("address") // 藥局地址
-    val address: String
+    val address: String,
+
+    @SerializedName("mask_adult") // 成人口罩數量
+    val mask_adult: Int,
+
+    @SerializedName("mask_child") // 小孩口罩數量
+    val mask_child: Int,
 )

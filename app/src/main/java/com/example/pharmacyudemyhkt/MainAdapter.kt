@@ -51,6 +51,8 @@ class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
          */
         holder.itemViewBinding.tvName.text = pharmacyList[position].property.name  // 藥局名稱
         holder.itemViewBinding.tvPhone.text = pharmacyList[position].property.phone // 藥局電話
+        holder.itemViewBinding.tvAdultAmount.text = pharmacyList[position].property.mask_adult.toString() // 成人口罩數量
+        holder.itemViewBinding.tvChildAmount.text = pharmacyList[position].property.mask_child.toString() // 小孩口罩數量
     }
 
     override fun getItemCount(): Int {
