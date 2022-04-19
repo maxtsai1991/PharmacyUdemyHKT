@@ -10,6 +10,7 @@
 
     <!--    android:clickable="true" 代表可以接受點擊  ;  android:focusable="true"  代表可聚焦的  ;  android:background="?android:attr/selectableItemBackground"    漣漪效果-->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"

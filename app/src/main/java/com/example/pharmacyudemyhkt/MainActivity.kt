@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pharmacyudemyhkt.OkHttpUtil.Companion.mOkHttpUtil
+import com.example.pharmacyudemyhkt.data.Feature
 import com.example.pharmacyudemyhkt.data.PharmacyInfo
 import com.example.pharmacyudemyhkt.databinding.ActivityMainBinding
 import com.google.gson.Gson
@@ -310,17 +311,25 @@ import java.lang.StringBuilder
  */
 
 /**
- *  4-36 RecyclerView 進階項目佈局 (https://tw-hkt.blogspot.com/2021/01/android-recyclerview_22.html)
- *
+ *  4-41 Adapter監聽並回傳點擊事件(透過介面讓Activity和Adapter做溝通,就可以把Adapter所接收到的點擊事件,回傳給Activity) (https://tw-hkt.blogspot.com/2021/01/recyclerview.html)
+ *      1.  item_view ) 項目設定id值 EX : android:id="@+id/layout_item"
+ *      2.  MainAdapter ) 加入 CallBack IItemClickListener介面
+ *      3.  onBindViewHolder ) 然後繼續在 MainAdapter.kt，卡片 UI 上加入監聽點擊事件，並在事件中加入CallBack 回傳當下項目資料 EX :
+ *          holder.itemViewBinding.layoutItem.setOnClickListener { itemClickListener.onItemClickListener(pharmacyList[position]) }
+ *      4.  接著 MainAdapter 加入 CallBack itemClickListener參數 EX : class MainAdapter (private val itemClickListener: IItemClickListener)
+ *      5.  MainActivity ) 所以 MainActivity 會去實作這個 CallBack，並在收到回呼時執行跳頁並傳遞該筆藥局資料 EX :
+ *          5-1.   Activity加入介面 EX : class MainActivity : AppCompatActivity(),MainAdapter.IItemClickListener { }
+ *          5-2.   設定Adapter,寫this是因為已經在MainActivity類別上打上,MainAdapter.IItemClickListener所以可以寫this EX : viewAdapter = MainAdapter(this)
+ *          5-3.   實作/覆寫onItemClickListener方法,並簡易測試使用Log方式  EX :   override fun onItemClickListener(data: Feature) { Log.d(TAG, data.property.name); }
  */
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(),MainAdapter.IItemClickListener {
     /**
      * companion object 補充說明 :
      *          1.  類似Java的靜態(Static關鍵字,因為Kotlin沒有類似Java的Static關鍵字用法)
      *          2.  通常單例也會寫在裡面
      */
     companion object{
-
     }
 
     val TAG = MainActivity::class.java.simpleName
@@ -353,7 +362,7 @@ class MainActivity : AppCompatActivity() {
         // 定義 LayoutManager 為 LinearLayoutManager (決定RecyclerView如何顯示)
         viewManager =  LinearLayoutManager(this)
         // 自定義 Adapte 為 MainAdapter，稍後再定義 MainAdapter 這個類別
-        viewAdapter = MainAdapter()
+        viewAdapter = MainAdapter(this)
 
         /**
          * 定義從佈局當中，拿到 recycler_view 元件 , 透過 kotlin 的 apply 語法糖，設定 LayoutManager 和 Adapter
@@ -504,6 +513,19 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+    /**
+     *  實作IItemClickListener介面的方法
+     *      當點擊item時候,MainAdapter.kt就會監聽到你點擊的事件(透過onBindViewHolder裡面的holder.itemViewBinding.layoutItem.setOnClickListener),
+     *      然後把該筆位置資訊(pharmacyList[position])回傳到MainActivity.kt,回傳回去的方式是Adapter透過介面回傳給Activity,
+     *      Activity就會在實作的onItemClickListener方法接收到傳回來的資料,那看你要拿item的什麼資料都可以,只要onBindViewHolder裡面有寫
+     */
+    override fun onItemClickListener(data: Feature) {
+        Log.d(TAG, data.property.name);
+        Log.d(TAG, data.property.phone);
+        Log.d(TAG, data.property.address);
+        Log.d(TAG, data.property.mask_adult.toString());
+        Log.d(TAG, data.property.mask_child.toString());
     }
 
 }

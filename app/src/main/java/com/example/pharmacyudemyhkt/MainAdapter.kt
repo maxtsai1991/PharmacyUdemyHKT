@@ -25,7 +25,7 @@ import com.example.pharmacyudemyhkt.databinding.ItemViewBinding
  *
  */
 
-class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
+class MainAdapter (private val itemClickListener: IItemClickListener) : RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
 
     var pharmacyList : List<Feature> = emptyList() // 一開始預設是空的列表
         set(value) {
@@ -33,6 +33,9 @@ class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
             notifyDataSetChanged()  // 刷新(如果pharmacyList有資料進來,那我們就去通知RecyclerView有資料變化,去做資料的更新)
         }
 
+    /**
+     *  View Binding的寫法的好處 : 可省去傳統需要先宣告變數名稱,以及findViewById才能使用元件,要使用元件還需要在onBindViewHolder裡綁定
+     */
     class MyViewHolder (val itemViewBinding: ItemViewBinding) : RecyclerView.ViewHolder(itemViewBinding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -53,10 +56,27 @@ class MainAdapter :RecyclerView.Adapter<MainAdapter.MyViewHolder>(){
         holder.itemViewBinding.tvPhone.text = pharmacyList[position].property.phone // 藥局電話
         holder.itemViewBinding.tvAdultAmount.text = pharmacyList[position].property.mask_adult.toString() // 成人口罩數量
         holder.itemViewBinding.tvChildAmount.text = pharmacyList[position].property.mask_child.toString() // 小孩口罩數量
+
+        /**
+         * 點擊item的監聽事件
+         * pharmacyList[position] : 各項目位置
+         */
+        holder.itemViewBinding.layoutItem.setOnClickListener {
+            itemClickListener.onItemClickListener(pharmacyList[position])
+        }
     }
 
     override fun getItemCount(): Int {
         return pharmacyList.size
     }
 
+    /**
+     * 定義 CallBack 介面
+     * MainActivity.kt 跟 MainAdapter.kt 是透過這個IItemClickListener介面來做溝通 ,
+     *      MainActivity 怎麼跟 MainAdapter說我要用的是IItemClickListener介面, 是透過MainAdapter參數(private val itemClickListener: IItemClickListener),
+     *      並且itemClickListener有item的各項目的位置(pharmacyList[position]) EX : itemClickListener.onItemClickListener(pharmacyList[position])
+     */
+    interface IItemClickListener{
+        fun onItemClickListener(data: Feature)
+    }
 }
